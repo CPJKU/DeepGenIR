@@ -1,0 +1,214 @@
+#
+# train.py configuration file
+# ----------------------------
+#
+
+expirement_base_path: "<...>/msmarco-passage/generative"
+debug_base_path: "<...>/debug"
+tqdm_disabled: True
+log_interval: 500
+eval_log_interval : 10000
+checkpoint_interval: -1 #-1 to ignore
+seed: 1111
+
+#
+# query/passage inputs (train,validate,test)
+# ------------------------------------------
+#
+
+preprocessed_tokenized: True
+
+#
+# training paths (and preprocessing config)
+# computed by generate_file_split.sh
+#
+train_tsv: "<...>/msmarco/passage/processed/triples.train.small.cleaned.split-4/*"
+max_training_batch_count: -1 # maximum training batches: -1 for all
+
+#
+# validation paths (and preprocessing config)
+#
+validation_tsv: "<...>/msmarco/passage/processed/validation.subset.top200.cleaned.split-4/*"
+max_validation_batch_count: -1 # maximum validation batches: -1 for all
+validation_qrels: "<...>/msmarco/passage/qrels.dev.tsv"
+
+# -1 for disabling this feature, and only run validation after every epoch
+validate_every_n_batches: 15000
+
+# validate different candidate set cutoffs (cs@N)
+validation_candidate_set_from_to: [1,200]
+validation_candidate_set_interval: 2
+validation_candidate_set_path: "<...>/msmarco/passage/run.msmarco-passage.BM25_k1_0.9_b_0.4.dev.subset.txt"
+
+validation_save_only_best: True
+
+#
+# test paths
+#
+test_tsv: "<...>/msmarco/passage/processed/test2019.top1000.cleaned.split-4/*"
+max_test_batch_count: -1 # maximum test batches: -1 for all
+test_qrels: "<...>/msmarco/passage/test2019-qrels.txt"
+
+test_candidate_set_max: 200
+test_candidate_set_path: "<...>/msmarco/passage/run.msmarco-passage.BM25-k1_0.82_b_0.72.test2019.txt"
+
+#
+# evaluation
+# --------------------------------------------------------
+#
+
+metric_tocompare: 'recip_rank'  
+trec_eval_path: "<...>/trec_eval/trec_eval"
+
+#
+# pre-trained word representation inputs (embedding layer)
+# --------------------------------------------------------
+#
+
+token_embedder_type: "embedding" # elmo, embedding, bert, bart
+
+pre_trained_embedding: "<...>/wordembeddings/glove/glove.42B.300d.txt"
+pre_trained_embedding_dim: 300
+
+vocab_directory: "<...>/msmarco/passage/processed/vocabs/allen_vocab_lower_5"
+train_embedding: True
+
+elmo_options_file: "https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x1024_128_2048cnn_1xhighway/elmo_2x1024_128_2048cnn_1xhighway_options.json"
+elmo_weights_file: "https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x1024_128_2048cnn_1xhighway/elmo_2x1024_128_2048cnn_1xhighway_weights.hdf5"
+
+transformers_pretrained_model_id: 'google/bert_uncased_L-2_H-128_A-2' # name identifier of a pre-trained transformers model.
+# google/bert_uncased_L-4_H-256_A-4
+# google/bert_uncased_L-2_H-128_A-2
+# facebook/bart-base
+
+transformers_tokenizer_model_id: 'bert-base-uncased'
+
+#if 'transformers_pretrained_model_id' is set to 'random' a random Transformer is created based on the following parameters 
+bert_hidden_size: 128
+bert_intermediate_size: 512
+bert_num_heads: 2
+bert_num_layers: 2
+bert_dropout: 0.1
+
+
+#
+# trainer hyperparameters
+# -----------------------
+#
+
+model: "knrm" # available: knrm, conv_knrm, conv_knrm_same_gram, match_pyramid, pacrr, tk, bertkernel, discbert, seq2seqatt, pgn, pgnt, t2t, bert2t, bart
+
+loss: "negl" # maxmargin, crossentropy, neglul
+loss_maxmargin_margin: 1
+
+optimizer: "adam"
+
+param_group0_learning_rate: 0.0001
+param_group0_weight_decay: 0
+
+param_group1_names: ["encoder_bert.embeddings", "encoder_bert.encoder", "encoder_bert.pooler", "_transf_encoder_pgn.layers"] 
+param_group1_learning_rate: 0.00003
+param_group1_weight_decay: 0
+
+# disable with factor = 1 
+learning_rate_scheduler_patience: 5 # * validate_every_n_batches = batch count to check
+learning_rate_scheduler_factor: 0.5
+
+epochs: 2
+batch_size_train: 128
+batch_size_eval: 128
+
+early_stopping_patience: 15 # * validate_every_n_batches = batch count to check
+
+#
+# regularization and length normalization
+# -----------------------
+#
+dropi: 0.0
+drops: 0.0
+
+length_param_s: 0.0
+
+idfcf_path: "<...>/msmarco/passage/processed/stats/idf_cf.pkl"
+
+#
+# per model params: specify with modelname_param: ...
+# ----------------------------------------------------
+#
+
+# max sequence lengths, disable cutting off with -1
+max_doc_length: 200
+max_query_length: 30
+
+knrm_kernels: 11
+
+conv_knrm_kernels: 11
+conv_knrm_conv_out_dim: 300 # F in the paper 
+
+
+match_pyramid_conv_output_size : [16,16,16,16,16] 
+match_pyramid_conv_kernel_size : [[3,3],[3,3],[3,3],[3,3],[3,3]]
+match_pyramid_adaptive_pooling_size: [[36,90],[18,60],[9,30],[6,20],[3,10]]
+
+mv_lstm_hidden_dim: 32
+mv_top_k: 10
+
+pacrr_unified_query_length: 40
+pacrr_unified_document_length: 160
+pacrr_max_conv_kernel_size: 3
+pacrr_conv_output_size: 32
+pacrr_kmax_pooling_size: 2
+
+tk_att_intermediate_size: 512
+tk_att_heads: 2
+tk_att_layer: 2
+tk_kernels_mu: [1.0, 0.9, 0.7, 0.5, 0.3, 0.1, -0.1, -0.3, -0.5, -0.7, -0.9]
+tk_kernels_sigma: [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+
+seq2seq_lstm_hidden_dim: 300
+seq2seq_enc_lstm_num_layers: 1
+seq2seq_projection_dim: None
+seq2seq_tie: True
+
+bertseq2seq_lstm_hidden_dim: 300
+bertseq2seq_enc_lstm_num_layers: 1
+bertseq2seq_projection_dim: None
+bertseq2seq_tie: True
+
+pgn_lstm_hidden_dim: 300
+pgn_enc_lstm_num_layers: 1
+pgn_projection_dim: None
+pgn_tie: True
+
+tpgn_lstm_hidden_dim: 300
+tpgn_enc_lstm_num_layers: 1
+tpgn_enc_trans_num_layers: 2
+tpgn_enc_trans_intermediate_size: 512
+tpgn_enc_trans_num_heads: 2
+tpgn_enc_trans_dropout: 0.1
+tpgn_projection_dim: None
+tpgn_tie: True
+
+
+t2t_encoder_num_layers: 2
+t2t_decoder_num_layers: 2
+t2t_intermediate_size: 512
+t2t_num_heads: 2
+t2t_dropout: 0.1
+t2t_output_proj_dim: None
+t2t_tie: True
+
+bert2t_decoder_hidden_size: 128
+bert2t_decoder_intermediate_size: 512
+bert2t_decoder_num_heads: 2
+bert2t_decoder_num_layers: 2
+bert2t_decoder_dropout: 0.1
+bert2t_tie_encoder_decoder: True
+bert2t_tie_decoder_output: True
+
+
+
+
+
+
+
