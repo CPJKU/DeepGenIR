@@ -1,14 +1,9 @@
 # A Modern Perspective on Query Likelihood with Deep Generative Retrieval Models
 _ICTIR'21 Oleg Lesota, Navid Rekabsaz, Daniel Cohen, Klaus Antonius Grasserbauer, Carsten Eickhoff and Markus Schedl_
 
-Existing neural ranking models follow the text matching paradigm, where document-to-query relevance is estimated through predicting the matching score. Drawing from the rich literature of classical generative retrieval models, we introduce and formalize the paradigm of Deep Generative Retrieval Models defined via the cumulative probabilities of generating query terms. This paradigm offers a grounded probabilistic view on relevance estimation while still enabling the use of modern BERT and transformer architectures. In contrast to the matching paradigm, the probabilistic nature of these generative rankers readily offers a fine-grained measure of uncertainty, without imposing any computational overhead nor any need for model modification. We adopt several current neural generative models in our framework and also introduce a novel generative ranker (T-PGN), which combines the encoding capacity of Transformers with the Pointer Generator Network model. We conduct an extensive set of evaluation experiments on passage retrieval, leveraging the MS~MARCO Passage Re-ranking and TREC Deep Learning 2019 Passage Re-ranking collections. Our results show the significantly higher performance of our novel T-PGN model on the MS~MARCO collection when compared with other variants of generative models.
+This repository contains a framework intended for investigating various neural generative models and comparing them to the State of the Art matching models.
+To prepare the training data, please consult the "How to train the models" section [in this repository](https://github.com/sebastian-hofstaetter/sigir19-neural-ir). You will find hints on how to train and test the models below.
 
-Lastly, we demonstrate that exploiting the uncertainty information of deep generative rankers opens new perspectives to query/collection understanding, and significantly improves the cut-off prediction task. 
-
----
-This repository was branched from [SIGIR-19-Neural-IR by Sebastian Hofstaetter](https://github.com/sebastian-hofstaetter/sigir19-neural-ir) and developed in the direction of Neural Generative Retrieval models. **The two repositories share the same structure and data preparation routine.** Please see the original repository to find out more about aspects not related to Neural **Generative** IR Models.
-
-The repository does not contain the code of the model used for cut-off prediction. Consult the original paper for more information about [Choppy](https://dl.acm.org/doi/10.1145/3397271.3401188).
 
 ## Recommended setup
 
@@ -118,5 +113,7 @@ $ python train.py --config-file [PATH_TO_CONFIG_FILE] --cuda --gpu-id 0 --config
 ```sh
 $ python train.py --config-file [PATH_TO_CONFIG_FILE] --cuda --gpu-id 0 --config-overwrites "model: bart, token_embedder_type: bart, transformers_pretrained_model_id: facebook/bart-base, transformers_tokenizer_model_id: facebook/bart-base, loss: negl, param_group0_learning_rate: 0.00003, batch_size_train: 32" --run-name bart#base
 ```
+---
+This repository was branched from [SIGIR-19-Neural-IR by Sebastian Hofstaetter](https://github.com/sebastian-hofstaetter/sigir19-neural-ir) and developed in the direction of Neural Generative Retrieval models. **The two repositories share the same structure and data preparation routine.** Please see the original repository to find out more about aspects not related to Neural **Generative** IR Models.
 
-
+The repository does not contain the code of the model used for cut-off prediction. Consult the original paper for more information about [Choppy](https://dl.acm.org/doi/10.1145/3397271.3401188).
