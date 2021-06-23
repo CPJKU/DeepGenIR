@@ -17,7 +17,7 @@ PIP:
 * GPUtil;
 * Transformers;
 
-## Usage
+## Usage - Train
 1) In configs/jku-msmarco-passge.yaml set the needed work folders (```expirement_base_path:```, ```debug_base_path:```), this is were the <RUN_FOLDERS> of your experiments will be located;
 2) Basic command for running experiments:
 ```sh
@@ -27,7 +27,7 @@ $ python train.py --run-name experiment1 --config-file configs/jku-msmarco-passa
 * key ```--debug``` can be used to check if the whole pipeline is in one piece: it shortens training, validation and test procedures;
 * ```--config-overwrites <string>``` can be used to adjust the config for one particular launch. Format the string as a comma separated list of fields to be written over (see examples below);
 
-### Usage - test
+## Usage - Test
 ```sh
 $ python train.py --cuda --gpu-id 0 --run-folder <RUN_FOLDER> --test
 ```
@@ -39,7 +39,7 @@ Set those three below for new custom test set:
 * key ```--custom-test-qrels <str>```
 * key ```--custom-test-candidates <str>```
 
-### Usage - test commands:
+### Commands to reproduce the tests from the paper:
 Test-set 1: **SPARCE**
 ```sh
 $ python3 train.py --cuda --test --custom-test-depth 200 --custom-test-tsv "<...>/msmarco/passage/processed/validation.not-subset.top200.cleaned.split-4/*" --custom-test-qrels "<...>/msmarco/passage/qrels.dev.tsv" --custom-test-candidates "<...>/msmarco/passage/run.msmarco-passage.BM25_k1_0.9_b_0.4.dev.txt" --test-files-pretfix "SPARSE-" --run-folder <run_folder> --gpu-id 0
