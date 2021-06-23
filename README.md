@@ -2,7 +2,7 @@
 _ICTIR'21 Oleg Lesota, Navid Rekabsaz, Daniel Cohen, Klaus Antonius Grasserbauer, Carsten Eickhoff and Markus Schedl_
 
 This repository contains a framework intended for investigating various neural generative models and comparing them to the State of the Art matching models.
-To prepare the training data, please consult the "How to train the models" section [in this repository](https://github.com/sebastian-hofstaetter/sigir19-neural-ir). You will find hints on how to train and test the models below.
+To prepare the training data, please consult the "How to train the models" section [in this repository](https://github.com/sebastian-hofstaetter/sigir19-neural-ir). You will find hints on how to train and test the neral generative models below.
 
 
 ## Recommended setup
